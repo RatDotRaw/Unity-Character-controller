@@ -1,3 +1,5 @@
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Character_controller : MonoBehaviour
@@ -16,6 +18,8 @@ public class Character_controller : MonoBehaviour
 
     public Transform PlayerTransform;
     public Rigidbody rb;
+
+    public TMP_Text  floorLabel;
 
     private bool isOnFloor = true;
     private Vector3 floorNormal = new Vector3(0f, 0f, 0f);
@@ -86,10 +90,8 @@ public class Character_controller : MonoBehaviour
         // Debug.Log(move.ToString());
         Vector3 direction = PlayerTransform.transform.TransformDirection(move);
 
-        if (isOnFloor)
-        {
-            apply_friction(floorFriction);
-        }
+        if (isOnFloor) apply_friction(floorFriction);
+        if (direction == Vector3.zero) return;
 
         // quake 1 style movement + my extra
         float wishSpeed = Mathf.Min(moveInput.magnitude, 1f) * WalkSpeed;
@@ -100,7 +102,7 @@ public class Character_controller : MonoBehaviour
         // Debug.Log(addSpeed);
         if (addSpeed <= 0f) return; // already at speed
 
-        float speedFraction = Mathf.Clamp(rb.linearVelocity.magnitude, 0f, 1f);
+        float speedFraction = Mathf.Clamp(rb.linearVelocity.magnitude / WalkSpeed, 0f, 1f);
 
         float accelSpeed;
         if (isOnFloor)
@@ -124,13 +126,14 @@ public class Character_controller : MonoBehaviour
     {
         coyoteTimeLeft += Time.deltaTime;
 
+        floorLabel.text = jumpsLeft.ToString();
         if (isOnFloor)
         {
             jumpsLeft = airJumps;
             coyoteTimeLeft = coyoteTime;
         }
 
-        if (!inputActions.Player.Jump.IsPressed())
+        if (!inputActions.Player.Jump.WasPerformedThisFrame())
         {
             return;
         }
@@ -138,12 +141,17 @@ public class Character_controller : MonoBehaviour
         Vector3 jumpVelocity = new Vector3(rb.linearVelocity.x, 5f, rb.linearVelocity.z); 
         if (isOnFloor)
         {
-            rb.linearVelocity = jumpVelocity; 
-        } else if (coyoteTimeLeft > 0f) 
+            rb.linearVelocity = jumpVelocity;
+            coyoteTimeLeft = -1f;
+            isOnFloor = false;
+        } 
+        else if (coyoteTimeLeft > 0f) 
         {
             rb.linearVelocity = jumpVelocity;
-            coyoteTimeLeft = 0f;
-        } else if (jumpsLeft > 0)
+            coyoteTimeLeft = -1f;
+            Debug.Log(coyoteTimeLeft.ToString());
+        } 
+        else if (jumpsLeft > 0)
         {
             rb.linearVelocity = jumpVelocity;
             jumpsLeft += -1;
