@@ -126,7 +126,7 @@ public class Character_controller : MonoBehaviour
     {
         coyoteTimeLeft += Time.deltaTime;
 
-        floorLabel.text = jumpsLeft.ToString();
+        if (floorLabel) floorLabel.text = jumpsLeft.ToString();
         if (isOnFloor)
         {
             jumpsLeft = airJumps;
@@ -165,8 +165,10 @@ public class Character_controller : MonoBehaviour
         if (speed < .01f)
         {
             rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+        } else
+        {
+            float drop = speed * friction * Time.deltaTime;
+            rb.linearVelocity *= Mathf.Max(speed - drop, 0f) / speed;
         }
-        float drop = speed * friction * Time.deltaTime;
-        rb.linearVelocity *= Mathf.Max(speed - drop, 0f) / speed;
     }
 }
