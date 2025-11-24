@@ -84,13 +84,18 @@ public class Character_controller : MonoBehaviour
     }
     void movement()
     {
+        rb.useGravity = true;
         // get player input
         Vector2 moveInput = inputActions.Player.Move.ReadValue<Vector2>();
         Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
         // Debug.Log(move.ToString());
         Vector3 direction = PlayerTransform.transform.TransformDirection(move);
 
-        if (isOnFloor) apply_friction(floorFriction);
+        if (isOnFloor)
+        {
+            apply_friction(floorFriction);
+            rb.useGravity = false;
+        }
         if (direction == Vector3.zero) return;
 
         // quake 1 style movement + my extra
