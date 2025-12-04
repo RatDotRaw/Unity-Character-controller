@@ -112,12 +112,12 @@ public class Character_controller : MonoBehaviour
         float accelSpeed;
         if (isOnFloor)
         {
-            accelSpeed = walkAcceleration.Evaluate(speedFraction) * Time.deltaTime * wishSpeed;
+            accelSpeed = (walkAcceleration.Evaluate(speedFraction)*10 ) * Time.deltaTime * wishSpeed;
             // Debug.Log(walkAcceleration.Evaluate(speedFraction) * Time.deltaTime * wishSpeed);
         }
         else
         {
-            accelSpeed = airAcceleration.Evaluate(speedFraction) * Time.deltaTime * wishSpeed;
+            accelSpeed = (airAcceleration.Evaluate(speedFraction)*10 ) * Time.deltaTime * wishSpeed;
         }
 
         if (accelSpeed > addSpeed)
